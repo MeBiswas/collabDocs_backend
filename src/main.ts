@@ -7,6 +7,7 @@ import {
 } from '@nestjs/platform-fastify'
 
 import { AppModule, ObserveInstrument } from './app.module.js'
+import { createValidationPipe } from './common/pipes/validation.pipe.js'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -17,13 +18,7 @@ async function bootstrap() {
     },
   )
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-    }),
-  )
+  app.useGlobalPipes(createValidationPipe())
 
   const configService = app.get(ConfigService)
 
