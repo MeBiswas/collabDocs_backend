@@ -7,12 +7,14 @@ import { AppController } from './app.controller.js'
 import configuration from './config/configuration.js'
 import envValidationSchema from './config/env.validation.js'
 import { HealthModule } from './modules/health/health.module.js'
+import { ValidationExampleModule } from './modules/validation-example/validation-example.module.js'
 
 export const { ObserveModule, ObserveInstrument } = createObserveModule()
 
 @Module({
   imports: [
     HealthModule,
+    ValidationExampleModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [configuration],
