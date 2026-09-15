@@ -10,4 +10,9 @@ export class HealthController {
   checkHealth() {
     return this.healthService.getHealth()
   }
+
+  @Get('test-error')
+  throwUnhandledError() {
+    throw new Error('Database connection leak details: pass=secret123')
+  }
 }

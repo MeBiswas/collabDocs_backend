@@ -1,19 +1,24 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { App } from 'supertest/types'
+import { INestApplication } from '@nestjs/common'
 import { AppModule } from './../src/app.module.js'
+import { Test, TestingModule } from '@nestjs/testing'
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify'
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>
+  let app: NestFastifyApplication<App>
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile()
 
-    app = moduleFixture.createNestApplication()
+    app = moduleFixture.createNestApplication(new FastifyAdapter())
     await app.init()
+    await app.getHttpAdapter().getInstance().ready()
   })
 
   it('/ (GET)', () => {
@@ -24,6 +29,8 @@ describe('AppController (e2e)', () => {
   })
 
   afterEach(async () => {
-    await app.close()
+    if (app) {
+      await app.close()
+    }
   })
 })

@@ -1,4 +1,4 @@
-import { Body, Post, Controller } from '@nestjs/common'
+import { Get, Body, Post, Controller } from '@nestjs/common'
 
 import { ValidationExampleService } from './validation-example.service.js'
 import { CreateValidationExampleDto } from './dto/create-validation-example.dto.js'
@@ -12,5 +12,10 @@ export class ValidationExampleController {
   @Post()
   create(@Body() dto: CreateValidationExampleDto) {
     return this.validationExampleService.create(dto)
+  }
+
+  @Get('test-error')
+  throwUnhandledError() {
+    throw new Error('Database connection leak details: pass=secret123')
   }
 }

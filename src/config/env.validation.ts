@@ -10,6 +10,7 @@ const envValidationSchema = joi.object({
   APP_KEY: joi.string().required(),
   APP_SECRET: joi.string().required(),
   SERVICE_ID: joi.string().default('collabDocs_backend'),
+  CORS_ORIGINS: joi.string().required(),
 })
 
 export default envValidationSchema

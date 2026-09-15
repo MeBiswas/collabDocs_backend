@@ -22,15 +22,17 @@
     "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
   },
   "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@fastify/helmet": "^13.1.1",
     "@nestjs/common": "^12.0.1",
     "@nestjs/config": "^12.0.0",
     "@nestjs/core": "^12.0.1",
-    "@nestjs/observe": "^0.1.8",
-    "@nestjs/platform-express": "^12.0.1",
     "@nestjs/platform-fastify": "^12.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "joi": "^18.2.8",
+    "nestjs-pino": "^5.1.0",
+    "pino-http": "^11.0.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

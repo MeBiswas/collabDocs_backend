@@ -1,15 +1,15 @@
-import { Module } from '@nestjs/common'
-import { createObserveModule } from '@nestjs/observe'
-import { ConfigModule, ConfigService } from '@nestjs/config'
+import { LoggerModule } from 'nestjs-pino'
+import type { FastifyRequest } from 'fastify'
+import { ConfigModule } from '@nestjs/config'
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 
 import { AppService } from './app.service.js'
 import { AppController } from './app.controller.js'
 import configuration from './config/configuration.js'
 import envValidationSchema from './config/env.validation.js'
 import { HealthModule } from './modules/health/health.module.js'
+import { RequestIdMiddleware } from './common/middleware/request-id.middleware.js'
 import { ValidationExampleModule } from './modules/validation-example/validation-example.module.js'
-
-export const { ObserveModule, ObserveInstrument } = createObserveModule()
 
 @Module({
   imports: [
@@ -20,18 +20,24 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule()
       load: [configuration],
       validationSchema: envValidationSchema,
     }),
-    ObserveModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        appKey: configService.getOrThrow<string>('observe.APP_KEY'),
-        appSecret: configService.getOrThrow<string>('observe.APP_SECRET'),
-        serviceId:
-          configService.get<string>('observe.SERVICE_ID') ??
-          'collabDocs_backend',
-      }),
+    LoggerModule.forRoot({
+      pinoHttp: {
+        autoLogging: true,
+        customProps: (req) => ({
+          requestId: (
+            req as unknown as FastifyRequest & {
+              requestId?: string
+            }
+          ).requestId,
+        }),
+      },
     }),
   ],
   providers: [AppService],
   controllers: [AppController],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestIdMiddleware).forRoutes('*')
+  }
+}
