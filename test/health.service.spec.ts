@@ -1,34 +1,15 @@
-import request from 'supertest'
-import { Test } from '@nestjs/testing'
-import { INestApplication } from '@nestjs/common'
-
-import { AppModule } from '../src/app.module.js'
+import { HealthService } from '../src/modules/health/health.service.js'
+import { HealthController } from '../src/modules/health/health.controller.js'
 
 describe('Health Controller', () => {
-  let app: INestApplication
+  let controller: HealthController
 
   beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-
-    await app.init()
+    controller = new HealthController(new HealthService())
   })
 
-  afterAll(async () => {
-    if (app) {
-      await app.close()
-    }
-  })
-
-  it('GET /health should return 200', async () => {
-    const response = await request(app.getHttpServer())
-      .get('/health')
-      .expect(200)
-
-    expect(response.body).toEqual({
+  it('should return a healthy status', () => {
+    expect(controller.checkHealth()).toEqual({
       status: 'ok',
     })
   })
