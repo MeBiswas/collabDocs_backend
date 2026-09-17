@@ -1,6 +1,4 @@
 import request from 'supertest'
-import { App } from 'supertest/types'
-import { INestApplication } from '@nestjs/common'
 import { AppModule } from './../src/app.module.js'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
@@ -9,7 +7,7 @@ import {
 } from '@nestjs/platform-fastify'
 
 describe('AppController (e2e)', () => {
-  let app: NestFastifyApplication<App>
+  let app: NestFastifyApplication
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
