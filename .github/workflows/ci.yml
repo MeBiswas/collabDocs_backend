@@ -1,0 +1,60 @@
+name: CI Pipeline
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    branches:
+      - main
+      - biswas
+      - abhi
+
+  push:
+    branches:
+      - main
+      - abhi
+
+jobs:
+  validate:
+    name: Lint, Typecheck, Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24.16.0
+          cache: 'npm'
+
+      - name: Setup npm
+        run: npm install --global npm@12.0.2
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint Check
+        run: npm run lint
+
+      - name: Format Check
+        run: npx prettier --check "src/**/*.ts" "test/**/*.ts"
+
+      - name: Type Check
+        run: npm run typecheck
+
+      - name: Run Unit Tests
+        run: npm run test
+
+      - name: Run E2E Tests
+        env:
+          NODE_ENV: test
+          APP_KEY: ci-test-app-key
+          APP_SECRET: ci-test-app-secret
+          CORS_ORIGINS: http://localhost:3000,https://trusted-client.com
+        run: npm run test:e2e
+
+      - name: Run Build
+        run: npm run build
