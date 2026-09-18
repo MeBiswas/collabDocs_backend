@@ -20,6 +20,8 @@ describe('Security & Request Infrastructure (e2e)', () => {
   let app: NestFastifyApplication
 
   beforeAll(async () => {
+    process.env.MONGODB_ATLAS_URI ??= 'mongodb://127.0.0.1:27017/test'
+
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     })
