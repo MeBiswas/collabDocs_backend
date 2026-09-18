@@ -10,4 +10,7 @@ export default () => ({
     APP_SECRET: process.env.APP_SECRET || '',
     SERVICE_ID: process.env.SERVICE_ID || 'collabDocs_backend',
   },
+  database: {
+    uri: process.env.MONGODB_ATLAS_URI || '',
+  },
 })

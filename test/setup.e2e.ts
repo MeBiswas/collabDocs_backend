@@ -1,0 +1,1 @@
+process.env.MONGODB_ATLAS_URI ??= 'mongodb://localhost:27017/test'

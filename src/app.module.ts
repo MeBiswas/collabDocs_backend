@@ -7,6 +7,7 @@ import { AppService } from './app.service.js'
 import { AppController } from './app.controller.js'
 import configuration from './config/configuration.js'
 import envValidationSchema from './config/env.validation.js'
+import { DatabaseModule } from './database/database.module.js'
 import { HealthModule } from './modules/health/health.module.js'
 import { RequestIdMiddleware } from './common/middleware/request-id.middleware.js'
 import { ValidationExampleModule } from './modules/validation-example/validation-example.module.js'
@@ -14,6 +15,7 @@ import { ValidationExampleModule } from './modules/validation-example/validation
 @Module({
   imports: [
     HealthModule,
+    DatabaseModule,
     ValidationExampleModule,
     ConfigModule.forRoot({
       isGlobal: true,
