@@ -10,7 +10,7 @@ export function sanitizeMongoURI(uri: string): string {
     parsed.password = ''
     return parsed.toString()
   } catch (error) {
-    console.log('Error:', error)
+    console.log('Sanitize URI Error:', error)
     return uri.replace(/\/\/[^@]+@/, '//')
   }
 }
