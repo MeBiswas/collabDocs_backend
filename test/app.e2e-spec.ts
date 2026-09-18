@@ -1,10 +1,16 @@
 import request from 'supertest'
-import { AppModule } from './../src/app.module.js'
+import { Module } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify'
+
+import { AppModule } from './../src/app.module.js'
+import { DatabaseModule } from '../src/database/database.module.js'
+
+@Module({})
+class TestDatabaseModule {}
 
 describe('AppController (e2e)', () => {
   let app: NestFastifyApplication
@@ -12,7 +18,10 @@ describe('AppController (e2e)', () => {
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile()
+    })
+      .overrideModule(DatabaseModule)
+      .useModule(TestDatabaseModule)
+      .compile()
 
     app = moduleFixture.createNestApplication(new FastifyAdapter())
     await app.init()

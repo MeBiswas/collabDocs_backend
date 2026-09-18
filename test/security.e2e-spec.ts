@@ -1,14 +1,20 @@
 import request from 'supertest'
 import cors from '@fastify/cors'
 import helmet from '@fastify/helmet'
-import { AppModule } from '../src/app.module.js'
+import { Module } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { createValidationPipe } from '../src/common/pipes/validation.pipe.js'
 import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify'
+
+import { AppModule } from '../src/app.module.js'
+import { DatabaseModule } from '../src/database/database.module.js'
+import { createValidationPipe } from '../src/common/pipes/validation.pipe.js'
 import { GlobalExceptionFilter } from '../src/common/filters/global-exception.filter.js'
+
+@Module({})
+class TestDatabaseModule {}
 
 describe('Security & Request Infrastructure (e2e)', () => {
   let app: NestFastifyApplication
@@ -16,13 +22,15 @@ describe('Security & Request Infrastructure (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile()
+    })
+      .overrideModule(DatabaseModule)
+      .useModule(TestDatabaseModule)
+      .compile()
 
     app = moduleFixture.createNestApplication<NestFastifyApplication>(
       new FastifyAdapter(),
     )
 
-    // Register security plugins and global handlers matching main.ts
     await app.register(helmet)
     await app.register(cors, {
       origin: ['http://localhost:3000', 'https://trusted-client.com'],
@@ -36,7 +44,9 @@ describe('Security & Request Infrastructure (e2e)', () => {
   })
 
   afterAll(async () => {
-    await app.close()
+    if (app) {
+      await app.close()
+    }
   })
 
   describe('Security Headers (Helmet)', () => {
@@ -104,14 +114,12 @@ describe('Security & Request Infrastructure (e2e)', () => {
           .get('/validation-example/test-error')
           .expect(500)
 
-        // Verify standardized error contract
         expect(response.body).toMatchObject({
           statusCode: 500,
           error: 'INTERNAL_SERVER_ERROR',
         })
         expect(response.body.requestId).toBeDefined()
 
-        // Ensure sensitive server details and stack traces are excluded
         expect(response.body).not.toHaveProperty('stack')
         expect(JSON.stringify(response.body)).not.toContain('secret123')
       } finally {
