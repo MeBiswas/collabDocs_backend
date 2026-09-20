@@ -7,6 +7,7 @@ const envValidationSchema = joi.object({
     .valid('development', 'test', 'production')
     .default('development'),
   APP_KEY: joi.string().required(),
+  REDIS_URL: joi.string().required(),
   APP_SECRET: joi.string().required(),
   CORS_ORIGINS: joi.string().required(),
   PORT: joi.number().port().default(3000),

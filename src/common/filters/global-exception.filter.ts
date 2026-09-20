@@ -54,13 +54,20 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         : (exception as Error)?.message || message
     }
 
+    const exceptionName =
+      exception instanceof Error ? exception.name : 'UnknownException'
+    const sanitizedStack =
+      exception instanceof Error
+        ? exception.stack?.replace(exception.message, '[REDACTED]')
+        : undefined
+
     this.logger.error({
       requestId,
-      exception,
+      exception: exceptionName,
       statusCode,
       url: request.url,
       method: request.method,
-      stack: exception instanceof Error ? exception.stack : undefined,
+      stack: isProduction ? undefined : sanitizedStack,
     })
 
     return reply.status(statusCode).send({

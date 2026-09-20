@@ -106,4 +106,22 @@ describe('GlobalExceptionFilter', () => {
       requestId: 'req-uuid-123',
     })
   })
+
+  it('should redact unhandled exception messages from development logs', () => {
+    process.env.NODE_ENV = 'development'
+    const exception = new Error('Database password: secret123')
+    const loggerError = vi.mocked((filter as any).logger.error)
+
+    filter.catch(exception, mockHost)
+
+    expect(loggerError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        exception: 'Error',
+        stack: expect.stringContaining('[REDACTED]'),
+      }),
+    )
+    expect(JSON.stringify(loggerError.mock.calls[0][0])).not.toContain(
+      'secret123',
+    )
+  })
 })

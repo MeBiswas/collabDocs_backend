@@ -4,7 +4,9 @@ import { ConfigModule } from '@nestjs/config'
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
 
 import { AppService } from './app.service.js'
+import redisConfig from './config/redis.config.js'
 import { AppController } from './app.controller.js'
+import { RedisModule } from './redis/redis.module.js'
 import configuration from './config/configuration.js'
 import envValidationSchema from './config/env.validation.js'
 import { DatabaseModule } from './database/database.module.js'
@@ -16,10 +18,11 @@ import { ValidationExampleModule } from './modules/validation-example/validation
   imports: [
     HealthModule,
     DatabaseModule,
+    RedisModule,
     ValidationExampleModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [configuration],
+      load: [configuration, redisConfig],
       validationSchema: envValidationSchema,
     }),
     LoggerModule.forRoot({

@@ -9,8 +9,7 @@ export function sanitizeMongoURI(uri: string): string {
     parsed.username = ''
     parsed.password = ''
     return parsed.toString()
-  } catch (error) {
-    console.log('Sanitize URI Error:', error)
+  } catch {
     return uri.replace(/\/\/[^@]+@/, '//')
   }
 }
