@@ -46,12 +46,13 @@ jobs:
         run: npm run test
 
       - name: Run E2E Tests
+        run: npm run test:e2e
         env:
           NODE_ENV: test
           APP_KEY: ci-test-app-key
           APP_SECRET: ci-test-app-secret
+          MONGODB_ATLAS_URI: mongodb://localhost:27017/test
           CORS_ORIGINS: http://localhost:3000,https://trusted-client.com
-        run: npm run test:e2e
 
       - name: Run Build
         run: npm run build
